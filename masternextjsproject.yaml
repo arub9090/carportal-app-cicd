@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backendcont
+spec:
+  selector:
+    matchLabels:
+      app: backendcont
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: backendcont
+    spec:
+      containers:
+      - name: backendcont
+        image: arif9090/carportal-backend:v1
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backendcont
+  labels:
+    app: backendcont
+spec:
+  selector:
+   app: backendcont
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontcont
+  labels:
+    app: frontcont
+spec:
+  selector:
+   app: frontcont
+  type: ClusterIP
+  ports:
+  - port: 3000
+    targetPort: 3000
+    protocol: TCP
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontcont
+spec:
+  selector:
+    matchLabels:
+      app: frontcont
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: frontcont
+    spec:
+      containers:
+      - name: frontcont
+        image: arif9090/carportal-frontend:v1
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginxcont
+  labels:
+    app: nginxcont
+spec:
+  selector:
+   app: nginxcont
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    nodePort: 30500
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginxcont
+spec:
+  selector:
+    matchLabels:
+      app: nginxcont
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginxcont
+    spec:
+      containers:
+      - name: nginxcont
+        image: arif9090/carportal-nginx:v1
+        ports:
+        - containerPort: 80

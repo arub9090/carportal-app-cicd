@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    container_name: "backendcont"
+    ports:
+      - "8000:8000"
+  frontend:
+    build: ./frontend
+    container_name: 'frontcont'
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+  ngnix:
+    build: ./nginx
+    container_name: nginxcont
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
